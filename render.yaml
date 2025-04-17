@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: deteksi-penyakit-gigi
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: gunicorn app:app
+    runtime: python
+    region: oregon
