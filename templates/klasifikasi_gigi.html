@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deteksi Penyakit Gigi</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <header>Deteksi Penyakit Gigi Menggunakan CNN</header>
+
+  <div class="container">
+    <p>Upload atau ambil gambar gigi untuk memprediksi kemungkinan kondisi gigi berdasarkan model CNN.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+      <div class="image-preview">
+        <img id="preview-image" src="{{ image_url if image_url else url_for('static', filename='placeholder.png') }}" alt="Preview Gambar" />
+      </div>
+
+      <input type="file" accept="image/*" name="image" id="upload" hidden onchange="previewImage(event)" />
+
+      <div class="btn-group">
+        <button type="button" class="btn" onclick="document.getElementById('upload').click()">
+          <i class="fa-solid fa-folder-open"></i> Upload
+        </button>
+        <button type="submit" class="btn">
+          <i class="fa-solid fa-magnifying-glass"></i> Prediksi
+        </button>
+        <button type="button" class="btn" onclick="openCamera()">
+          <i class="fa-solid fa-camera"></i> Kamera
+        </button>
+      </div>
+
+      <video id="video" autoplay playsinline style="display:none;"></video>
+      <button type="button" class="btn" id="capture-btn" onclick="capture()" style="display: none;">Capture</button>
+      <canvas id="canvas" style="display: none;"></canvas>
+    </form>
+
+    {% if label and confidence %}
+      <div class="result-section 
+        {% if confidence >= 90 %}
+          confident
+        {% elif confidence >= 60 %}
+          moderate
+        {% else %}
+          unsure
+        {% endif %}
+      ">
+        <h2>Hasil Deteksi</h2>
+        <p class="result-text">Gigi terdeteksi dalam kondisi: <strong>{{ label }}</strong><br>
+        Tingkat keyakinan: <strong>{{ confidence }}%</strong>.</p>
+
+        {% if confidence < 60 %}
+          <p class="alert-text">⚠️ Keyakinan sistem rendah. Coba unggah gambar dengan pencahayaan lebih baik atau dari sudut yang jelas.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
